@@ -1,0 +1,1 @@
+2023/10/28	11:30:48	615f3fde-791e-453a-ac70-8bb1130a4576	Error: ENOENT: no such file or directory, stat '/home/nat/repos/node_training2/views/subdir/test.html'

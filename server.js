@@ -1,101 +1,70 @@
-const http = require("http");
+const express = require("express");
+const app = express();
 const path = require("path");
-const fs = require("fs");
-const fsPromises = require("fs").promises;
-
-const { logEvents } = require("./logEvents");
-
-const EventEmitter = require("events");
-
-class Emitter extends EventEmitter {}
-
-const emitter = new Emitter();
-emitter.on("log", (msg, fileName) => logEvents(msg, fileName));
+const cors = require("cors");
 const PORT = process.env.PORT || 7000;
+const { logReq } = require("./middleware/logEvents.js");
+const { logErr } = require("./middleware/logErr.js");
 
-async function serveFile(filePath, contentType, response) {
-  try {
-    const data = await fsPromises.readFile(
-      filePath,
-      !contentType.includes("image") ? "utf8" : ""
-    );
-    response.writeHead(filePath.includes("404.html") ? 404 : 200, {
-      "Content-Type": contentType,
-    });
-    response.end(data);
-  } catch (err) {
-    console.error(err);
-    emitter.emit("log", `${err.name}: ${err.message}`, "errLog.txt");
-    response.statusCode = 500;
-    response.end();
-  }
-}
+app.use(logReq);
 
-const server = http.createServer((req, res) => {
-  console.log(req.url, req.method);
-  emitter.emit("log", `${req.url}\t${req.method}`, "reqLog.txt");
-
-  const extension = path.extname(req.url);
-
-  let contentType;
-  switch (extension) {
-    case ".css":
-      contentType = "text/css";
-      break;
-    case ".js":
-      contentType = "text/javascript";
-      break;
-    case ".json":
-      contentType = "application/json";
-      break;
-    case ".jpg":
-      contentType = "image/jpeg";
-      break;
-    case ".png":
-      contentType = "image/png";
-      break;
-    case ".txt":
-      contentType = "text/plain";
-      break;
-    default:
-      contentType = "text/html";
-  }
-
-  let filePath =
-    contentType === "text/html" && req.url === "/"
-      ? path.join(__dirname, "views", "index.html")
-      : contentType === "text/html" && req.url.slice(-1) === "/"
-      ? path.join(__dirname, "views", req.url, "index.html")
-      : contentType === "text/html"
-      ? path.join(__dirname, "views", req.url)
-      : path.join(__dirname, req.url);
-
-  //makes the .html extension not required in the browser
-  if (!extension && req.url.slice(-1) !== "/") {
-    filePath += ".html";
-  }
-
-  const fileExists = fs.existsSync(filePath);
-
-  if (fileExists) {
-    serveFile(filePath, contentType, res);
-  } else {
-    switch (path.parse(filePath).base) {
-      case "old-page.html":
-        res.writeHead(301, { Location: "/new-page.html" });
-        res.end();
-
-      default:
-        serveFile(path.join(__dirname, "views", "404.html"), "text/html", res);
+//Cross Origin Resource Sharing
+const whitelist = ["https://localhost:7000"];
+//checks the require origin to make sure the requester is valid. Has to match the white list.
+const corsOptions = {
+  origin: (origin, callback) => {
+    if (whitelist.indexOf(origin) !== -1 || !origin) {
+      //THE || !origin part should be removed in the main release.
+      callback(null, true);
+    } else {
+      callback(new Error("Not allowed by CORS"));
     }
-    res.end;
+  },
+};
+app.use(cors());
+
+app.use(express.urlencoded({ extended: false }));
+
+app.use(express.json());
+
+app.use("/", express.static(path.join(__dirname, "/public")));
+app.use("/subdir", express.static(path.join(__dirname, "/public")));
+
+app.use("/subdir", require("./routes/subdir.js"));
+
+app.get("^/$|/index(.html)?", (req, res) => {
+  res.sendFile(path.join(__dirname, "views", "index.html"));
+});
+
+app.get("/new-page(.html)?", (req, res) => {
+  res.sendFile(path.join(__dirname, "views", "new-page.html"));
+});
+
+app.get("/old-page(.html)?", (req, res) => {
+  res.redirect(301, "/new-page.html");
+});
+
+// Route handlers
+app.get(
+  "/hello(.html)?",
+  (req, res, next) => {
+    console.log("AAAAHHHH");
+    next();
+  },
+  (req, res) => {
+    res.send("Good bye");
+  }
+);
+
+app.all("*", (req, res) => {
+  res.status(404);
+  if (req.accepts("html")) {
+    res.sendFile(path.join(__dirname, "views", "404.html"));
+  } else if (req.accepts("json")) {
+    res.json({ error: "404 Not Found" });
   }
 });
 
-server.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+app.use(logErr);
 
-// //listen for a 'log' event
-// emitter.on("log", (msg) => logEvents(msg));
-
-// //emit a 'log' event
-// emitter.emit("log", "test");
+app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
