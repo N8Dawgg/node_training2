@@ -1,0 +1,19 @@
+{
+  "name": "node_training2",
+  "version": "1.0.0",
+  "description": "",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server",
+    "dev": "nodemon server"
+  },
+  "author": "N8Dawg",
+  "license": "ISC",
+  "dependencies": {
+    "date-fns": "^2.30.0",
+    "uuid": "^9.0.1"
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.1"
+  }
+}
