@@ -35,3 +35,4 @@
 2023/10/29	16:18:07	b55acf9b-0e04-479d-b1c1-76fe13d8da47	POST /register
 2023/10/29	16:19:00	6b8f3012-3c67-4706-b01c-217a4de7d4e5	POST /register
 2023/10/29	16:19:03	ad00850c-8f7d-44da-82c2-0d732276ed7c	POST /register
+2023/10/29	17:10:48	fe13af50-f61c-4f2e-bf24-ddd727d7efb6	GET /authentication
