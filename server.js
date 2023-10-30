@@ -6,6 +6,7 @@ const PORT = process.env.PORT || 7000;
 const { logReq } = require("./middleware/logEvents.js");
 const { logErr } = require("./middleware/logErr.js");
 const { verifyJWT } = require("./middleware/verifyJWT.js");
+const cookieParser = require("cookie-parser");
 
 app.use(logReq);
 
@@ -29,6 +30,9 @@ app.use(express.urlencoded({ extended: false }));
 
 app.use(express.json());
 
+//cookie parser
+app.use(cookieParser());
+
 //server static files
 app.use("/", express.static(path.join(__dirname, "/public")));
 
@@ -36,6 +40,7 @@ app.use("/", express.static(path.join(__dirname, "/public")));
 app.use("/", require("./routes/root.js"));
 app.use("/register", require("./routes/register.js"));
 app.use("/authentication", require("./routes/authentication.js"));
+app.use("/refresh", require("./routes/refresh.js"));
 
 app.use(verifyJWT);
 app.use("/employees", require("./routes/api/employees.js"));
