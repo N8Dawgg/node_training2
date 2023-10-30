@@ -5,7 +5,7 @@ const employeeController = require("../../controllers/employeeController.js");
 
 router
   .route("/")
-  .get(employeeController.getAllEmployees)
+  .get(employeeController.getAllEmployees) //verifyJWT is checked first
   .post(employeeController.createNewEmployee)
   .put(employeeController.updateEmployee)
   .delete(employeeController.deleteEmployee);

@@ -8,6 +8,8 @@ const usersDB = {
 const fsPromises = require("fs").promises;
 const path = require("path");
 const bcrypt = require("bcrypt");
+const jwt = require("jsonwebtoken");
+require("dotenv").config();
 
 const authenticateUsernameAndPassword = async (req, res) => {
   const { username, password } = req.body;
@@ -24,7 +26,36 @@ const authenticateUsernameAndPassword = async (req, res) => {
 
     if (match) {
       //create JWT.
-      res.json({ success: `Welcome to the server, ${username}!!` });
+      //short term access token
+      const accessToken = jwt.sign(
+        { username: matchingUser.username },
+        process.env.ACCESS_TOKEN_SECRET,
+        { expiresIn: "30s" }
+      );
+      //long term refresh token
+      const refreshToken = jwt.sign(
+        { username: matchingUser.username },
+        process.env.REFRESH_TOKEN_SECRET,
+        { expiresIn: "1d" }
+      );
+
+      //saving refresh token with current user
+      const otherUsers = usersDB.users.filter(
+        (person) => person.username !== matchingUser.username
+      );
+      const currentUser = { ...matchingUser, refreshToken };
+      usersDB.setUsers([...otherUsers, currentUser]);
+      await fsPromises.writeFile(
+        path.join(__dirname, "..", "models", "users.json"),
+        JSON.stringify(usersDB.users)
+      );
+      //refresh token sent as HTTP cookie (NOT JS COOKIE!!)
+      res.cookie("jwt", refreshToken, {
+        httpOnly: true,
+        maxAge: 24 * 60 * 60 * 1000, //one day in milliseconds
+      });
+      //access token sent as json to be stored in memory (NOT A COOKIE!!)
+      res.json({ accessToken });
     } else {
       res.sendStatus(401);
     }
