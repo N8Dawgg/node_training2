@@ -12,7 +12,7 @@ const handleRefreshToken = (req, res) => {
   const cookies = req.cookies;
   //checks to see if you have cookies, and then if the cookies have a "jwt" element.
   if (!cookies?.jwt) {
-    return res.status(401);
+    return res.sendStatus(401);
   }
   const refreshToken = cookies.jwt;
   const matchingUser = usersDB.users.find(
