@@ -9,7 +9,6 @@ const fsPromises = require("fs").promises;
 const path = require("path");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
-require("dotenv").config();
 
 const authenticateUsernameAndPassword = async (req, res) => {
   const { username, password } = req.body;
