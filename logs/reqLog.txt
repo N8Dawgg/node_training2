@@ -93,3 +93,7 @@
 2023/10/30	18:26:10	0d9cbcec-f177-4ed7-a678-3d9f20a7f4f3	GET /employees
 2023/10/30	19:41:49	52017bbb-bb84-4854-be9d-90347a571c8f	POST /authentication
 2023/10/31	12:36:54	4862effa-526e-459b-9daf-2bbe86dae081	POST /authentication
+2023/10/31	14:37:24	5dbe4a04-8b75-4dc9-b99a-54f84dc39121	POST /authentication
+2023/10/31	14:38:02	d86518e6-aa01-41d2-98bb-d8f713946869	POST /register
+2023/10/31	14:38:23	5f63af76-bb74-45c8-a42d-87634775d09c	POST /authentication
+2023/10/31	14:38:34	b4ae7d03-d966-4fa8-bb61-580aed780250	GET /employees

@@ -25,8 +25,9 @@ const handleRefreshToken = (req, res) => {
     //check for errors or if the username does not match the "decoded" user.
     if (err || matchingUser.username !== decoded.username)
       return res.sendStatus(403);
+    const roles = Object.values(matchingUser.roles);
     const accessToken = jwt.sign(
-      { username: decoded.username },
+      { UserInfo: { username: decoded.username, roles: roles } },
       process.env.ACCESS_TOKEN_SECRET,
       { expiresIn: "30s" }
     );

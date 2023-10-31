@@ -25,10 +25,11 @@ const authenticateUsernameAndPassword = async (req, res) => {
     const match = await bcrypt.compare(password, matchingUser.password);
 
     if (match) {
+      const roles = Object.values(matchingUser.roles);
       //create JWT.
       //short term access token
       const accessToken = jwt.sign(
-        { username: matchingUser.username },
+        { UserInfo: { username: matchingUser.username, roles: roles } },
         process.env.ACCESS_TOKEN_SECRET,
         { expiresIn: "30s" }
       );
