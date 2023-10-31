@@ -92,3 +92,4 @@
 2023/10/30	18:26:08	877109d9-a107-46d8-b95d-8df9e6f22bb2	GET /employees
 2023/10/30	18:26:10	0d9cbcec-f177-4ed7-a678-3d9f20a7f4f3	GET /employees
 2023/10/30	19:41:49	52017bbb-bb84-4854-be9d-90347a571c8f	POST /authentication
+2023/10/31	12:36:54	4862effa-526e-459b-9daf-2bbe86dae081	POST /authentication

@@ -7,12 +7,16 @@ const { logReq } = require("./middleware/logEvents.js");
 const { logErr } = require("./middleware/logErr.js");
 const { verifyJWT } = require("./middleware/verifyJWT.js");
 const cookieParser = require("cookie-parser");
+const credentials = require("./middleware/credentials.js");
 
 app.use(logReq);
 
 //Cross Origin Resource Sharing
-const whitelist = ["https://localhost:7000"];
+const whitelist = require("./config/whiteList.js");
 //checks the require origin to make sure the requester is valid. Has to match the white list.
+
+app.use(credentials);
+
 const corsOptions = {
   origin: (origin, callback) => {
     if (whitelist.indexOf(origin) !== -1 || !origin) {

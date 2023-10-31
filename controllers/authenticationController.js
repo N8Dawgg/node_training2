@@ -52,6 +52,8 @@ const authenticateUsernameAndPassword = async (req, res) => {
       //refresh token sent as HTTP cookie (NOT JS COOKIE!!)
       res.cookie("jwt", refreshToken, {
         httpOnly: true,
+        sameSite: "None",
+        secure: true,
         maxAge: 24 * 60 * 60 * 1000, //one day in milliseconds
       });
       //access token sent as json to be stored in memory (NOT A COOKIE!!)
