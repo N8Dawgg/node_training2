@@ -1,12 +1,4 @@
-const usersDB = {
-  users: require("../models/users.json"),
-  setUsers: function (data) {
-    this.users = data;
-  },
-};
-
-const fsPromises = require("fs").promises;
-const path = require("path");
+const User = require("../models/User");
 const bcrypt = require("bcrypt");
 const ROLES_LIST = require("../config/rolesList");
 
@@ -15,9 +7,7 @@ const handleNewUser = async (req, res) => {
   if (!username || !password) {
     return res.status(400).json({ message: "Username and password required." });
   }
-  const userAlreadyExists = usersDB.users.find(
-    (person) => person.username === username
-  );
+  const userAlreadyExists = User.findOne({ username: username }).exec();
   if (userAlreadyExists) return res.sendStatus(409);
 
   try {
