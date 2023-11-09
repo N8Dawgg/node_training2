@@ -12,16 +12,13 @@ const handleNewUser = async (req, res) => {
 
   try {
     const hashedPassword = await bcrypt.hash(password, 10);
-    const newUser = {
-      username: req.body.username,
-      roles: { User: ROLES_LIST.User },
+    const result = await User.create({
+      username: username,
       password: hashedPassword,
-    };
-    usersDB.setUsers([...usersDB.users, newUser]);
-    await fsPromises.writeFile(
-      path.join(__dirname, "..", "models", "users.json"),
-      JSON.stringify(usersDB.users)
-    );
+    });
+    //You can do newUser, put the data in, and then use newUser.save() to inject it into the DB.
+
+    console.log(result);
     res.status(201).json({ success: `New user ${username} created!` });
   } catch (err) {
     res.status(500).json({ message: err.message });
